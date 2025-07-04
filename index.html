@@ -31,38 +31,6 @@
       animation: fadeIn 2s ease-in-out;
     }
 
-    .cake {
-      width: 220px;
-      margin: 40px auto 20px;
-      position: relative;
-    }
-
-    .cake img {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    .candle {
-      position: absolute;
-      width: 16px;
-      height: 40px;
-      background: #ffcc00;
-      top: -40px;
-      border-radius: 5px;
-      cursor: pointer;
-      box-shadow: 0 0 10px #ff0;
-      transition: opacity 0.3s;
-    }
-
-    .candle.off {
-      opacity: 0.3;
-      box-shadow: none;
-    }
-
-    .candle:nth-child(2) { left: 50px; }
-    .candle:nth-child(3) { left: 90px; }
-    .candle:nth-child(4) { left: 130px; }
-
     .balloon {
       width: 50px;
       height: 70px;
@@ -99,15 +67,6 @@
   <h1>🎉 Happy Birthday Ammama! 🎉</h1>
   <div class="quote">“A grandmother is a little bit parent, a little bit teacher, and a little bit best friend.”</div>
 
-  <div class="cake">
-    <img src="https://i.ibb.co/gvhS0pN/cake.png" alt="Birthday Cake">
-    <div class="candle" data-index="0"></div>
-    <div class="candle" data-index="1"></div>
-    <div class="candle" data-index="2"></div>
-  </div>
-
-  <audio id="birthdaySong" src="https://cdn.pixabay.com/audio/2023/03/06/audio_a5ec13e0a5.mp3" preload="auto"></audio>
-
   <script>
     // 🎈 Balloon generator
     function createBalloon(color) {
@@ -128,22 +87,7 @@
       createBalloon(colors[Math.floor(Math.random() * colors.length)]);
     }, 900);
 
-    // 🎂 Candle logic
-    const candles = document.querySelectorAll('.candle');
-    let blownOut = [false, false, false];
-    const song = document.getElementById('birthdaySong');
-
-    candles.forEach((candle, index) => {
-      candle.addEventListener('click', () => {
-        if (!blownOut[index]) {
-          candle.classList.add('off');
-          blownOut[index] = true;
-          if (blownOut.every(c => c)) {
-            setTimeout(() => {
-              song.play();
-            }, 600);
-          }
-        }
+    
       });
     });
   </script>
