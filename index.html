@@ -2,171 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Happy Birthday Grandma</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎉 Happy Birthday Ammama!</title>
   <link rel="manifest" href="manifest.json">
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Comic Sans MS', sans-serif;
-      background: linear-gradient(to bottom, #ffdde1, #ee9ca7);
-      overflow-x: hidden;
+      background: linear-gradient(to bottom right, #fff0f5, #ffe4e1);
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      color: #fff;
+      overflow: hidden;
     }
 
     h1 {
-      font-size: 3em;
       margin-top: 40px;
-      text-shadow: 2px 2px 4px #000;
+      font-size: 2.8rem;
+      color: #d63384;
+      animation: fadeIn 1s ease-in-out;
     }
 
-    .balloon {
-      position: absolute;
-      width: 40px;
-      height: 60px;
-      background: red;
-      border-radius: 50% 50% 50% 50%;
-      animation: rise 8s linear infinite;
+    .quote {
+      margin: 20px auto;
+      font-size: 1.2rem;
+      max-width: 80%;
+      color: #555;
+      font-style: italic;
+      animation: fadeIn 2s ease-in-out;
     }
 
-    @keyframes rise {
-      0% { bottom: -100px; opacity: 1; }
-      100% { bottom: 120%; opacity: 0; }
+    .cake {
+      width: 200px;
+      margin: 40px auto 10px;
+      position: relative;
     }
 
-    .confetti {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: yellow;
-      animation: explode 1s ease-out forwards;
-    }
-
-    @keyframes explode {
-      from { transform: scale(0); opacity: 1; }
-      to { transform: scale(1); opacity: 0; top: -100px; }
-    }
-
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
-      background: #ff4081;
-      color: white;
-      font-size: 1em;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 2px 2px 5px #333;
-    }
-
-    #cake {
-      margin-top: 30px;
-      font-size: 2em;
+    .cake img {
+      width: 100%;
     }
 
     .candle {
-      display: inline-block;
-      width: 10px;
-      height: 30px;
-      background: orange;
-      margin: 0 5px;
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      background: #ffcc00;
+      top: -40px;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0;
     }
 
-    #countdown {
-      font-size: 1.5em;
-      margin: 20px 0;
+    .candle.off {
+      opacity: 0.3;
+      box-shadow: none;
+    }
+
+    .candle:nth-child(2) { left: 60px; }
+    .candle:nth-child(3) { left: 90px; }
+    .candle:nth-child(4) { left: 120px; }
+
+    .balloon {
+      width: 50px;
+      height: 70px;
+      background: red;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      position: absolute;
+      bottom: -100px;
+      animation: float 10s infinite;
+      cursor: pointer;
+      z-index: 0;
+    }
+
+    .string {
+      width: 2px;
+      height: 30px;
+      background: #555;
+      margin: 0 auto;
+      position: relative;
+      top: -10px;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-150vh); opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <h1>🎉 Happy Birthday Ammama! 🎉</h1>
-  <canvas id="confetti-canvas"></canvas>
+  <h1>🎉 Happy Birthday, Grandma! 🎉</h1>
+  <div class="quote">“A grandmother is a little bit parent, a little bit teacher, and a little bit best friend.”</div>
 
-  <div id="countdown"></div>
-
-  <button onclick="playSong()">▶ Play Song</button>
-  <button onclick="stopSong()">🔇 Mute</button>
-
-  <div id="cake">
-    🎂
-    <div id="candles"></div>
-    <br>
-    <button onclick="addCandle()">🕯️ Add Candle</button>
-    <button id="blowBtn" onclick="blowCandles()" style="display:none;">💨 Blow Out Candles</button>
+  <div class="cake">
+    <img src="https://i.imgur.com/lXQwE3f.png" alt="Cake">
+    <div class="candle" data-index="0"></div>
+    <div class="candle" data-index="1"></div>
+    <div class="candle" data-index="2"></div>
   </div>
 
+  <audio id="birthdaySong" src="https://cdn.pixabay.com/audio/2023/03/06/audio_a5ec13e0a5.mp3"></audio>
+
   <script>
-    // 🎈 Balloons
-    for (let i = 0; i < 20; i++) {
-      let b = document.createElement("div");
-      b.className = "balloon";
-      b.style.left = Math.random() * 100 + "vw";
-      b.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
-      b.style.animationDelay = Math.random() * 5 + "s";
+    // 🎈 Balloon generator
+    function createBalloon(color) {
+      const b = document.createElement('div');
+      b.classList.add('balloon');
+      b.style.background = color;
+      b.style.left = Math.random() * 100 + 'vw';
+      b.addEventListener('click', () => b.remove());
+      const string = document.createElement('div');
+      string.className = 'string';
+      b.appendChild(string);
       document.body.appendChild(b);
+      setTimeout(() => b.remove(), 10000);
     }
 
-    // 🎊 Confetti
-    for (let i = 0; i < 80; i++) {
-      let c = document.createElement("div");
-      c.className = "confetti";
-      c.style.left = Math.random() * 100 + "vw";
-      c.style.top = Math.random() * 50 + 20 + "vh";
-      c.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-      c.style.animationDelay = Math.random() + "s";
-      document.body.appendChild(c);
-    }
+    setInterval(() => {
+      const colors = ['#ff4d4d', '#ffa64d', '#4dd2ff', '#c04dff', '#4dff88'];
+      createBalloon(colors[Math.floor(Math.random() * colors.length)]);
+    }, 800);
 
-    // 🎵 Music
-    const audio = new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
-    function playSong() {
-      audio.play();
-    }
-    function stopSong() {
-      audio.pause();
-      audio.currentTime = 0;
-    }
+    // 🎂 Candle logic
+    const candles = document.querySelectorAll('.candle');
+    let blownOut = [false, false, false];
+    const song = document.getElementById('birthdaySong');
 
-    // ⏳ Countdown
-    function updateCountdown() {
-      const now = new Date();
-      let next = new Date(now.getFullYear(), 6, 5); // July 5
-      if (now > next) next.setFullYear(next.getFullYear() + 1);
-      let diff = next - now;
-      let d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      let h = Math.floor(diff / (1000 * 60 * 60)) % 24;
-      let m = Math.floor(diff / (1000 * 60)) % 60;
-      let s = Math.floor(diff / 1000) % 60;
-      document.getElementById("countdown").textContent = 
-        `🎈 ${d}d ${h}h ${m}m ${s}s until next birthday!`;
-    }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-    // 🎂 Cake builder
-    let candleCount = 0;
-    function addCandle() {
-      const container = document.getElementById("candles");
-      const candle = document.createElement("div");
-      candle.className = "candle";
-      container.appendChild(candle);
-      candleCount++;
-      if (candleCount >= 5) {
-        document.getElementById("blowBtn").style.display = "inline-block";
-      }
-    }
-
-    function blowCandles() {
-      document.getElementById("candles").innerHTML = "✨✨✨";
-      document.getElementById("blowBtn").style.display = "none";
-    }
-
-    // PWA install
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
+    candles.forEach((candle, index) => {
+      candle.addEventListener('click', () => {
+        if (!blownOut[index]) {
+          candle.classList.add('off');
+          blownOut[index] = true;
+          if (blownOut.every(c => c)) {
+            setTimeout(() => {
+              song.play();
+            }, 500);
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>
