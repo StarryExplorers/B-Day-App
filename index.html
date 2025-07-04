@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Happy Birthday Ammama</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Ammama!</title>
+  <link rel="manifest" href="manifest.json" />
   <style>
     body {
       margin: 0;
-      background: linear-gradient(to bottom right, #fff0f5, #ffe4e1);
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #fffaf0, #ffe4e1);
       text-align: center;
       overflow: hidden;
     }
@@ -24,31 +25,33 @@
     .quote {
       margin: 20px auto;
       font-size: 1.2rem;
-      max-width: 80%;
-      color: #555;
+      max-width: 90%;
+      color: #444;
       font-style: italic;
       animation: fadeIn 2s ease-in-out;
     }
 
     .cake {
-      width: 200px;
-      margin: 40px auto 10px;
+      width: 220px;
+      margin: 40px auto 20px;
       position: relative;
     }
 
     .cake img {
       width: 100%;
+      border-radius: 10px;
     }
 
     .candle {
       position: absolute;
-      width: 20px;
+      width: 16px;
       height: 40px;
       background: #ffcc00;
       top: -40px;
       border-radius: 5px;
       cursor: pointer;
       box-shadow: 0 0 10px #ff0;
+      transition: opacity 0.3s;
     }
 
     .candle.off {
@@ -56,9 +59,9 @@
       box-shadow: none;
     }
 
-    .candle:nth-child(2) { left: 60px; }
+    .candle:nth-child(2) { left: 50px; }
     .candle:nth-child(3) { left: 90px; }
-    .candle:nth-child(4) { left: 120px; }
+    .candle:nth-child(4) { left: 130px; }
 
     .balloon {
       width: 50px;
@@ -67,7 +70,7 @@
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       position: absolute;
       bottom: -100px;
-      animation: float 10s infinite;
+      animation: float 12s linear infinite;
       cursor: pointer;
       z-index: 0;
     }
@@ -97,13 +100,13 @@
   <div class="quote">“A grandmother is a little bit parent, a little bit teacher, and a little bit best friend.”</div>
 
   <div class="cake">
-    <img src="https://i.imgur.com/lXQwE3f.png" alt="Cake">
+    <img src="https://i.imgur.com/lXQwE3f.png" alt="Birthday Cake">
     <div class="candle" data-index="0"></div>
     <div class="candle" data-index="1"></div>
     <div class="candle" data-index="2"></div>
   </div>
 
-  <audio id="birthdaySong" src="https://cdn.pixabay.com/audio/2023/03/06/audio_a5ec13e0a5.mp3"></audio>
+  <audio id="birthdaySong" src="https://cdn.pixabay.com/audio/2023/03/06/audio_a5ec13e0a5.mp3" preload="auto"></audio>
 
   <script>
     // 🎈 Balloon generator
@@ -117,13 +120,13 @@
       string.className = 'string';
       b.appendChild(string);
       document.body.appendChild(b);
-      setTimeout(() => b.remove(), 10000);
+      setTimeout(() => b.remove(), 12000);
     }
 
     setInterval(() => {
       const colors = ['#ff4d4d', '#ffa64d', '#4dd2ff', '#c04dff', '#4dff88'];
       createBalloon(colors[Math.floor(Math.random() * colors.length)]);
-    }, 800);
+    }, 900);
 
     // 🎂 Candle logic
     const candles = document.querySelectorAll('.candle');
@@ -138,7 +141,7 @@
           if (blownOut.every(c => c)) {
             setTimeout(() => {
               song.play();
-            }, 500);
+            }, 600);
           }
         }
       });
