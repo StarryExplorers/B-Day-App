@@ -2,94 +2,191 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Birthday Ammama!</title>
-  <link rel="manifest" href="manifest.json" />
+  <title>Happy Birthday Grandma 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #fffaf0, #ffe4e1);
+      background: linear-gradient(to bottom right, #fff6fb, #e6e0ff);
+      overflow-x: hidden;
       text-align: center;
-      overflow: hidden;
     }
 
     h1 {
-      margin-top: 40px;
       font-size: 2.8rem;
-      color: #d63384;
-      animation: fadeIn 1s ease-in-out;
+      color: #c74afc;
+      margin-top: 30px;
     }
 
-    .quote {
-      margin: 20px auto;
+    p.quote {
       font-size: 1.2rem;
-      max-width: 90%;
-      color: #444;
-      font-style: italic;
-      animation: fadeIn 2s ease-in-out;
+      margin: 10px 0 40px;
+      color: #5f5f5f;
     }
 
-    .balloon {
-      width: 50px;
-      height: 70px;
-      background: red;
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      position: absolute;
-      bottom: -100px;
-      animation: float 12s linear infinite;
-      cursor: pointer;
-      z-index: 0;
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
 
-    .string {
-      width: 2px;
-      height: 30px;
-      background: #555;
-      margin: 0 auto;
-      position: relative;
-      top: -10px;
+    #searchInput {
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      margin-bottom: 25px;
     }
 
-    @keyframes float {
-      0% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(-150vh); opacity: 0; }
+    #appList {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      align-items: center;
+      padding-bottom: 50px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .app-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .app-card h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #a24ac3;
+    }
+
+    .app-card p {
+      font-size: 1rem;
+      color: #333;
+      margin: 10px 0 20px;
+    }
+
+    .app-card a {
+      background: #a24ac3;
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    .app-card a:hover {
+      background: #8b2aad;
     }
   </style>
 </head>
 <body>
-  <h1>🎉 Happy Birthday Ammama! 🎉</h1>
-  <div class="quote">“A grandmother is a little bit parent, a little bit teacher, and a little bit best friend.”</div>
 
+  <!-- 🎉 Birthday Header -->
+  <h1>🎉 Happy Birthday Grandma! 🎉</h1>
+  <p class="quote">“A grandmother is a little bit parent, a little bit teacher, and a little bit best friend.”</p>
+
+  <!-- 🔍 App Search -->
+  <input type="text" id="searchInput" placeholder="Search your special apps..." onkeyup="filterApps()">
+
+  <!-- 📦 App Grid -->
+  <div id="appList">
+
+    <!-- ✨ TwinkleNote Card -->
+    <div class="app-card" data-name="TwinkleNote" data-desc="A sparkly little note app to jot down thoughts.">
+      <h2>✨ TwinkleNote</h2>
+      <p>A sparkly little note app to jot down thoughts and reminders. It even has a recycle bin!</p>
+      <a href="https://starryexplorers.github.io/twinklenote/" target="_blank">Try Now</a>
+    </div>
+
+    <!-- More apps can go here later! -->
+
+  </div>
+
+  <!-- 🎈 Balloons Canvas -->
+  <canvas id="balloonCanvas"></canvas>
+
+  <!-- 🎈 JavaScript: Balloons + Search -->
   <script>
-    // 🎈 Balloon generator
-    function createBalloon(color) {
-      const b = document.createElement('div');
-      b.classList.add('balloon');
-      b.style.background = color;
-      b.style.left = Math.random() * 100 + 'vw';
-      b.addEventListener('click', () => b.remove());
-      const string = document.createElement('div');
-      string.className = 'string';
-      b.appendChild(string);
-      document.body.appendChild(b);
-      setTimeout(() => b.remove(), 12000);
+    // 🎈 Balloons
+    const canvas = document.getElementById('balloonCanvas');
+    const ctx = canvas.getContext('2d');
+    let balloons = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function createBalloon() {
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height + 50,
+        r: 20 + Math.random() * 10,
+        color: `hsl(${Math.random() * 360}, 80%, 70%)`,
+        speed: 1 + Math.random() * 1.5
+      };
     }
 
-    setInterval(() => {
-      const colors = ['#ff4d4d', '#ffa64d', '#4dd2ff', '#c04dff', '#4dff88'];
-      createBalloon(colors[Math.floor(Math.random() * colors.length)]);
-    }, 900);
+    for (let i = 0; i < 20; i++) {
+      balloons.push(createBalloon());
+    }
 
-    
+    canvas.addEventListener('click', function(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      balloons = balloons.filter(b => {
+        const dist = Math.hypot(b.x - clickX, b.y - clickY);
+        return dist > b.r; // remove balloon if popped
       });
     });
+
+    function drawBalloons() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let b of balloons) {
+        ctx.beginPath();
+        ctx.fillStyle = b.color;
+        ctx.ellipse(b.x, b.y, b.r * 0.8, b.r, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        b.y -= b.speed;
+        if (b.y + b.r < 0) Object.assign(b, createBalloon());
+      }
+      requestAnimationFrame(drawBalloons);
+    }
+    drawBalloons();
+
+    // 🔍 Search
+    function filterApps() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.app-card');
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        const desc = card.getAttribute('data-desc').toLowerCase();
+        const match = name.includes(input) || desc.includes(input);
+        card.style.display = match ? 'block' : 'none';
+      });
+    }
   </script>
+
+  <!-- 🛡️ Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('✅ Service Worker Registered'))
+        .catch(err => console.error('Service Worker Error', err));
+    }
+  </script>
+
 </body>
 </html>
